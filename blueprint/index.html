@@ -2,163 +2,133 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>[hidden]{display:none!important}body{margin:0}</style>
 <title>Blueprint Quote Wizard</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: one drafting sheet; a dimension-line progress bar on top, one step at a time beneath. Single committed blueprint look. */
+/* Layout: one blueprint sheet per step; dimension-line progress pinned top, Back/Next pinned to the thumb zone */
 :root{
   --paper:#123a6b; --grid:rgba(190,220,255,.09); --grid2:rgba(190,220,255,.18);
-  --line:#d8ecff; --dim:#8fb6e0; --chalk:#ffffff; --pencil:#ffd65a;
+  --line:#d8ecff; --dim:#8fb6e0; --chalk:#fff; --pencil:#ffd65a; --pencil-ink:#16253a;
   --hand:"Architects Daughter","Comic Sans MS",cursive;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html,body{min-height:100%}
-body{background:var(--paper);color:var(--line);font-family:var(--mono);font-size:15px;line-height:1.55;
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--paper);color:var(--line);font:15px/1.5 var(--mono);
   background-image:linear-gradient(var(--grid2) 1px,transparent 1px),linear-gradient(90deg,var(--grid2) 1px,transparent 1px),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:100px 100px,100px 100px,20px 20px,20px 20px}
-.sheet{max-width:880px;margin:0 auto;padding-block:28px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
-h1,h2{font-family:var(--hand);font-weight:400;margin:0;color:var(--chalk);text-wrap:balance;line-height:1.15}
-h1{font-size:2.3rem}
-h2{font-size:1.9rem}
-.small{font-size:.78rem;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;background-attachment:fixed}
+h1,h2{font-family:var(--hand);font-weight:400;margin:0;color:var(--chalk);line-height:1.15}
+h2{font-size:1.75rem}
+.small{font-size:.72rem;color:var(--dim);letter-spacing:.07em;text-transform:uppercase}
 button,input{font:inherit;color:inherit}
-button{cursor:pointer}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:2px dashed var(--pencil);outline-offset:3px}
 
-/* dimension-line progress */
-.dims{display:grid;grid-template-columns:repeat(4,1fr);position:relative;padding-top:14px}
-.dims::before{content:"";position:absolute;left:0;right:0;top:20px;border-top:1.5px solid var(--dim)}
-.dims .tick{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:0;color:var(--dim)}
-.dims .tick::before{content:"";width:1.5px;height:14px;background:var(--dim);margin-top:-7px}
-.dims .tick span{font-family:var(--hand);font-size:1.05rem}
-.dims .tick.done,.dims .tick.now{color:var(--chalk)}
-.dims .tick.now::before{background:var(--pencil);height:20px;width:3px;margin-top:-10px}
-.dims .tick.now span{color:var(--pencil)}
-.dims .tick:disabled{cursor:default}
+.head{position:sticky;top:0;z-index:4;background:var(--paper);border-bottom:1.5px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 10px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.head .in{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.head .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.head .t{font-family:var(--hand);font-size:1.1rem;color:var(--chalk)}
+.dim{position:relative;height:16px}
+.dim::before{content:"";position:absolute;left:0;right:0;top:8px;border-top:1.5px solid var(--dim)}
+.dim i{position:absolute;top:2px;width:1.5px;height:12px;background:var(--dim)}
+.dim .fill{position:absolute;left:0;top:7px;height:3px;background:var(--pencil);transition:width .25s}
 
-.title-block{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end;border:1.5px solid var(--line);padding:14px 16px}
-.title-block .cells{display:flex;gap:0;flex-wrap:wrap}
-.title-block .cells div{border-left:1px solid var(--dim);padding:0 14px;display:flex;flex-direction:column}
-.title-block .cells b{font-weight:500;color:var(--chalk)}
+main{max-width:640px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) calc(96px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:18px}
+.rooms{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.room{border:1.5px solid var(--line);background:rgba(10,30,60,.4);padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;min-height:140px}
+.room svg{width:48px;height:48px}
+.room b{font-family:var(--hand);font-size:1.35rem;font-weight:400;color:var(--chalk)}
+.room span{font-size:.75rem;color:var(--dim);line-height:1.3}
+.room[aria-pressed=true]{border-color:var(--pencil);box-shadow:inset 0 0 0 1.5px var(--pencil)}
 
-.step{display:flex;flex-direction:column;gap:20px}
-.rooms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-@media (max-width:560px){.rooms{grid-template-columns:minmax(0,1fr)}}
-.room{border:1.5px solid var(--line);background:rgba(10,30,60,.35);padding:16px;text-align:left;display:flex;gap:14px;align-items:center}
-.room svg{flex:none;width:64px;height:64px}
-.room b{font-family:var(--hand);font-size:1.5rem;font-weight:400;color:var(--chalk);display:block}
-.room span{font-size:.82rem;color:var(--dim)}
-.room:hover{border-color:var(--pencil)}
-.room[aria-pressed=true]{border-color:var(--pencil);box-shadow:inset 0 0 0 1px var(--pencil)}
+.m{border-bottom:1px dashed var(--grid2);padding-bottom:16px;display:flex;flex-direction:column;gap:10px}
+.m label{font-family:var(--hand);font-size:1.25rem;color:var(--chalk)}
+.ctl{display:flex;align-items:center;gap:10px}
+.ctl button{width:52px;height:52px;flex:none;border:1.5px solid var(--line);background:none;font-size:1.5rem}
+.ctl button:active{background:rgba(255,214,90,.15)}
+.ctl .val{flex:1;display:flex;align-items:baseline;justify-content:center;gap:6px;border-bottom:1.5px solid var(--line);min-width:0}
+.ctl input{width:100%;min-width:0;background:none;border:0;font-size:1.6rem;color:var(--pencil);text-align:right;padding:4px 0}
+.ctl .val span{font-size:.8rem;color:var(--dim);white-space:nowrap;flex:none}
+input[type=range]{width:100%;accent-color:var(--pencil);height:28px}
 
-.meas{display:flex;flex-direction:column;gap:22px}
-.m{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:6px 16px;align-items:center}
-.m label{grid-column:1/-1;font-family:var(--hand);font-size:1.2rem;color:var(--chalk)}
-.m .numbox{display:flex;align-items:baseline;gap:6px;border-bottom:1.5px solid var(--line)}
-.m .numbox input{width:100%;background:none;border:0;padding:4px 0;font-size:1.1rem;color:var(--pencil);text-align:right;min-width:0}
-.m .numbox span{font-size:.78rem;color:var(--dim);white-space:nowrap}
-input[type=range]{width:100%;accent-color:var(--pencil);background:none}
-
-.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-@media (max-width:560px){.levels{grid-template-columns:minmax(0,1fr)}}
-.lvl{border:1.5px dashed var(--dim);background:none;padding:14px;text-align:left;display:flex;flex-direction:column;gap:4px}
-.lvl b{font-family:var(--hand);font-weight:400;font-size:1.6rem;color:var(--chalk)}
-.lvl .p{font-size:1rem;color:var(--line)}
+.lvls{display:flex;flex-direction:column;gap:10px}
+.lvl{border:1.5px dashed var(--dim);background:none;padding:14px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 12px;text-align:left}
+.lvl b{font-family:var(--hand);font-size:1.6rem;font-weight:400;color:var(--chalk)}
+.lvl .p{grid-row:1/3;grid-column:2;font-size:1.05rem}
 .lvl[aria-pressed=true]{border-style:solid;border-color:var(--pencil)}
 .lvl[aria-pressed=true] .p{color:var(--pencil)}
-.specs{border:1.5px solid var(--line);padding:4px 16px}
-.specs div{display:grid;grid-template-columns:170px minmax(0,1fr);gap:12px;padding:10px 0;border-bottom:1px dashed var(--grid2)}
+.specs{margin:0;border:1.5px solid var(--line);padding:4px 14px}
+.specs div{padding:9px 0;border-bottom:1px dashed var(--grid2)}
 .specs div:last-child{border-bottom:0}
-.specs dt{color:var(--dim);font-size:.82rem;text-transform:uppercase;letter-spacing:.05em}
-.specs dd{margin:0;color:var(--chalk)}
-@media (max-width:560px){.specs div{grid-template-columns:minmax(0,1fr);gap:2px}}
+.specs dt{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.specs dd{margin:0;color:var(--chalk);font-size:.92rem}
 
-.est{border:2px solid var(--pencil);padding:22px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
-.est .range{font-family:var(--hand);font-size:clamp(2rem,7vw,3.4rem);color:var(--pencil);line-height:1}
-.others{display:flex;gap:24px;flex-wrap:wrap}
-.notes{margin:0;padding-left:18px;color:var(--line);max-width:64ch;display:flex;flex-direction:column;gap:6px}
-.nav{display:flex;justify-content:space-between;gap:12px}
-.btn{border:1.5px solid var(--line);background:none;padding:10px 18px;font-family:var(--hand);font-size:1.15rem}
-.btn.go{background:var(--pencil);color:#16253a;border-color:var(--pencil)}
-.btn:disabled{opacity:.35;cursor:default}
-.stamp{font-size:.75rem;color:var(--dim)}
-@media (prefers-reduced-motion:no-preference){.step{animation:draw .35s ease-out}@keyframes draw{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}}
+.est{border:2px solid var(--pencil);padding:20px 16px;display:flex;flex-direction:column;gap:6px}
+.est .range{font-family:var(--hand);font-size:clamp(2rem,10vw,3rem);color:var(--pencil);line-height:1.05}
+.others{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.others div{border:1px dashed var(--dim);padding:10px}
+.notes{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.9rem}
+.stamp{font-size:.72rem;color:var(--dim);margin:0}
+
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:4;background:var(--paper);border-top:1.5px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.nav .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:auto 1fr;gap:10px}
+.btn{height:54px;border:1.5px solid var(--line);background:none;padding:0 18px;font-family:var(--hand);font-size:1.25rem}
+.btn.go{background:var(--pencil);border-color:var(--pencil);color:var(--pencil-ink)}
+.btn:disabled{opacity:.3}
+@media (prefers-reduced-motion:no-preference){.step{animation:in .3s ease-out}@keyframes in{from{opacity:.3;transform:translateX(12px)}to{opacity:1;transform:none}}}
 </style>
-
-<main class="sheet">
-  <div class="title-block">
-    <div><div class="small">Sheet A-1 · Remodel estimate</div><h1>What will my remodel cost?</h1></div>
-    <div class="cells">
-      <div><span class="small">Room</span><b id="tbRoom">—</b></div>
-      <div><span class="small">Finish</span><b id="tbLvl">—</b></div>
-      <div><span class="small">Scale</span><b>1:1</b></div>
-    </div>
-  </div>
-
-  <nav class="dims" id="dims" aria-label="Steps"></nav>
-  <section id="stage"></section>
-
-  <div class="nav">
-    <button type="button" class="btn" id="back">← Back</button>
-    <button type="button" class="btn go" id="next">Next →</button>
-  </div>
-  <p class="stamp">Sample prices for demonstration. A real quote follows a site visit.</p>
-</main>
+<body>
+<header class="head"><div class="in">
+  <div class="row"><span class="t" id="stepName">Pick a room</span><span class="small" id="stepNo">Step 1 of 4</span></div>
+  <div class="dim" aria-hidden="true"><i style="left:0"></i><i style="left:33.3%"></i><i style="left:66.6%"></i><i style="right:0"></i><div class="fill" id="fill"></div></div>
+</div></header>
+<main id="stage"></main>
+<nav class="nav"><div class="in">
+  <button type="button" class="btn" id="back" aria-label="Back">←</button>
+  <button type="button" class="btn go" id="next">Next →</button>
+</div></nav>
 
 <script src="../data.js"></script>
 <script>
 (function(){
-const {TIERS,BOOK,defaults,itemPrice,total,usd,unitOf,esc}=window.GBB;
-const STEPS=['Room','Size','Finish','Estimate'];
+const {TIERS,BOOK,defaults,total,usd,esc}=window.GBB;
+const NAMES=['Pick a room','Rough size','Finish level','Your ballpark'];
 const ICONS={
  kitchen:'<rect x="6" y="10" width="52" height="44" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6 24h52M20 24v30M36 32h14v10H36z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="43" cy="17" r="3" fill="none" stroke="currentColor"/>',
  bath:'<rect x="6" y="10" width="52" height="44" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6 32h22v22M14 18a6 6 0 0 1 12 0v6H14z" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="44" cy="40" rx="7" ry="9" fill="none" stroke="currentColor" stroke-width="1.5"/>',
  deck:'<path d="M4 30h56M4 30v24M60 30v24M4 38h56M4 46h56M4 54h56M12 30V16h40v14" fill="none" stroke="currentColor" stroke-width="1.5"/>',
  floor:'<path d="M6 10h52v44H6zM6 21h52M6 32h52M6 43h52M24 10v11M42 21v11M18 32v11M38 43v11" fill="none" stroke="currentColor" stroke-width="1.5"/>'};
-let step=0, job=null, qty={}, lvl=1;
-
-function renderDims(){
-  document.getElementById('dims').innerHTML=STEPS.map((s,i)=>`<button type="button" class="tick ${i<step?'done':''} ${i===step?'now':''}" data-step="${i}" ${i>maxStep()?'disabled':''} aria-current="${i===step?'step':'false'}"><span>${i+1} · ${s}</span></button>`).join('');
-}
-function maxStep(){return job?3:0;}
+let step=0,job=null,qty={},lvl=1;
+const $=id=>document.getElementById(id);
+const stepOf=i=>Math.max(1,Math.round((i.max-i.min)/40/5)*5||1);
 function render(){
-  const st=document.getElementById('stage');let h='';
-  if(step===0){
-    h=`<div class="step"><h2>Which room are we working on?</h2><div class="rooms">`+Object.keys(BOOK).map(k=>`<button type="button" class="room" data-job="${k}" aria-pressed="${k===job}"><svg viewBox="0 0 64 64" aria-hidden="true">${ICONS[k]}</svg><div><b>${BOOK[k].name}</b><span>${BOOK[k].blurb}</span></div></button>`).join('')+`</div></div>`;
-  }else if(step===1){
-    h=`<div class="step"><h2>Rough measurements are fine</h2><div class="meas">`+BOOK[job].inputs.map(i=>`<div class="m"><label for="r-${i.k}">${esc(i.label)}</label><input type="range" id="r-${i.k}" data-k="${i.k}" min="${i.min}" max="${i.max}" step="1" value="${qty[i.k]}" aria-label="${esc(i.label)} slider"><div class="numbox"><input type="number" id="n-${i.k}" data-k="${i.k}" min="0" value="${qty[i.k]}" aria-label="${esc(i.label)}"><span>${esc(i.unit)}</span></div></div>`).join('')+`</div></div>`;
-  }else if(step===2){
-    h=`<div class="step"><h2>Pick a finish level</h2><div class="levels">`+TIERS.map((t,i)=>`<button type="button" class="lvl" data-lvl="${i}" aria-pressed="${i===lvl}"><span class="small">${['Solid & simple','Most popular','No compromises'][i]}</span><b>${t}</b><span class="p">${usd(total(job,i,qty).price)}</span></button>`).join('')+
-      `</div><dl class="specs">`+BOOK[job].items.map(it=>`<div><dt>${esc(it.name)}</dt><dd>${esc(it.t[lvl][0])}</dd></div>`).join('')+`</dl></div>`;
-  }else{
-    const t=total(job,lvl,qty).price, lo=Math.round(t*0.9/100)*100, hi=Math.round(t*1.1/100)*100;
-    h=`<div class="step"><h2>Your ballpark</h2><div class="est"><span class="small">${BOOK[job].name} · ${TIERS[lvl]} finish</span><span class="range">${usd(lo)} – ${usd(hi)}</span><span class="small">Planning range, ±10%</span></div>
-      <div class="others">`+TIERS.map((n,i)=>i===lvl?'':`<div><div class="small">${n}</div><div>${usd(total(job,i,qty).price)}</div></div>`).join('')+`</div>
-      <ul class="notes"><li>Bring this to your remodeler; it gives you both a shared starting point.</li><li>Hidden conditions behind walls and floors can change the final price.</li><li>Permits, design fees and appliances are not included.</li></ul></div>`;
-  }
-  st.innerHTML=h;
-  document.getElementById('tbRoom').textContent=job?BOOK[job].name:'—';
-  document.getElementById('tbLvl').textContent=step>=2&&job?TIERS[lvl]:'—';
-  document.getElementById('back').disabled=step===0;
-  const nx=document.getElementById('next');
-  nx.textContent=step===3?'Start over':'Next →'; nx.disabled=step===0&&!job;
-  renderDims();
+  let h='';
+  if(step===0){h=`<div class="step" style="display:flex;flex-direction:column;gap:16px"><h2>What are we remodeling?</h2><div class="rooms">`+Object.keys(BOOK).map(k=>`<button type="button" class="room" data-job="${k}" aria-pressed="${k===job}"><svg viewBox="0 0 64 64" aria-hidden="true">${ICONS[k]}</svg><b>${BOOK[k].name}</b><span>${BOOK[k].blurb}</span></button>`).join('')+`</div></div>`;}
+  else if(step===1){h=`<div class="step" style="display:flex;flex-direction:column;gap:16px"><h2>Rough numbers are fine</h2>`+BOOK[job].inputs.map(i=>`<div class="m"><label for="n-${i.k}">${esc(i.label)}</label>
+    <div class="ctl"><button type="button" data-step="-${stepOf(i)}" data-k="${i.k}" aria-label="Less">−</button><div class="val"><input type="number" inputmode="decimal" id="n-${i.k}" data-k="${i.k}" value="${qty[i.k]}"><span>${esc(i.unit)}</span></div><button type="button" data-step="${stepOf(i)}" data-k="${i.k}" aria-label="More">+</button></div>
+    <input type="range" id="r-${i.k}" data-k="${i.k}" min="${i.min}" max="${i.max}" value="${qty[i.k]}" aria-label="${esc(i.label)} slider"></div>`).join('')+`</div>`;}
+  else if(step===2){h=`<div class="step" style="display:flex;flex-direction:column;gap:16px"><h2>Pick a finish level</h2><div class="lvls">`+TIERS.map((t,i)=>`<button type="button" class="lvl" data-lvl="${i}" aria-pressed="${i===lvl}"><b>${t}</b><span class="small">${['Solid & simple','Most popular','No compromises'][i]}</span><span class="p">${usd(total(job,i,qty).price)}</span></button>`).join('')+`</div>
+    <div class="small">What ${TIERS[lvl]} includes</div><dl class="specs">`+BOOK[job].items.map(it=>`<div><dt>${esc(it.name)}</dt><dd>${esc(it.t[lvl][0])}</dd></div>`).join('')+`</dl></div>`;}
+  else{const t=total(job,lvl,qty).price,lo=Math.round(t*.9/100)*100,hi=Math.round(t*1.1/100)*100;
+    h=`<div class="step" style="display:flex;flex-direction:column;gap:16px"><h2>Your ballpark</h2><div class="est"><span class="small">${BOOK[job].name} · ${TIERS[lvl]} finish</span><span class="range">${usd(lo)} –<br>${usd(hi)}</span><span class="small">Planning range ±10%</span></div>
+    <div class="others">`+TIERS.map((n,i)=>i===lvl?'':`<div><div class="small">${n}</div><div>${usd(total(job,i,qty).price)}</div></div>`).join('')+`</div>
+    <ul class="notes"><li>Bring this to your remodeler as a shared starting point.</li><li>Hidden conditions behind walls and floors can change the price.</li><li>Permits, design fees and appliances not included.</li></ul><p class="stamp">Sample prices for demonstration.</p></div>`;}
+  $('stage').innerHTML=h;
+  $('stepName').textContent=NAMES[step];$('stepNo').textContent=`Step ${step+1} of 4`;$('fill').style.width=(step/3*100)+'%';
+  $('back').disabled=step===0;$('next').textContent=step===3?'Start over':step===2?'See my ballpark →':'Next →';$('next').disabled=step===0&&!job;
+  window.scrollTo({top:0});
 }
-document.getElementById('stage').addEventListener('click',e=>{
+$('stage').addEventListener('click',e=>{
   const r=e.target.closest('[data-job]');if(r){if(job!==r.dataset.job){job=r.dataset.job;qty=defaults(job);}step=1;render();return;}
-  const l=e.target.closest('[data-lvl]');if(l){lvl=+l.dataset.lvl;render();}
+  const l=e.target.closest('[data-lvl]');if(l){lvl=+l.dataset.lvl;const y=window.scrollY;render();window.scrollTo({top:y});return;}
+  const s=e.target.closest('[data-step]');if(s){const k=s.dataset.k;qty[k]=Math.max(0,(+qty[k]||0)+(+s.dataset.step));$('n-'+k).value=qty[k];$('r-'+k).value=qty[k];}
 });
-document.getElementById('stage').addEventListener('input',e=>{
-  const k=e.target.dataset.k;if(!k)return;qty[k]=+e.target.value||0;
-  const other=document.getElementById((e.target.type==='range'?'n-':'r-')+k);if(other)other.value=qty[k];
-});
-document.getElementById('dims').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(b&&!b.disabled){step=+b.dataset.step;render();}});
-document.getElementById('back').addEventListener('click',()=>{if(step>0){step--;render();}});
-document.getElementById('next').addEventListener('click',()=>{if(step===3){step=0;job=null;lvl=1;}else step++;render();});
+$('stage').addEventListener('input',e=>{const k=e.target.dataset.k;if(!k)return;qty[k]=+e.target.value||0;const o=$((e.target.type==='range'?'n-':'r-')+k);if(o)o.value=qty[k];});
+$('back').onclick=()=>{if(step>0){step--;render();}};
+$('next').onclick=()=>{if(step===3){step=0;job=null;lvl=1;}else step++;render();};
 render();
 })();
 </script>
+</body>
+</html>
