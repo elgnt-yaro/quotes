@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}</style>
+<title>Mix & Match Remodel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a finish-sample board — one row per item, three swatch chips per row; running total pinned beside it */
+:root{
+  --bg:#f7f7f4; --card:#ffffff; --ink:#22211e; --muted:#6c6a63; --line:#e1dfd8;
+  --good:#d9c4a0; --good-ink:#3b2f19; --better:#7c93a8; --better-ink:#ffffff; --best:#4a2f22; --best-ink:#f4e8dc;
+  --sel:#22211e;
+  --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"DM Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#171614; --card:#201f1c; --ink:#eeebe4; --muted:#a19d93; --line:#34322d;
+  --good:#c9b38c; --good-ink:#2b2210; --better:#8aa2b8; --better-ink:#0f1820; --best:#8a5a42; --best-ink:#fbefe4; --sel:#eeebe4; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171614; --card:#201f1c; --ink:#eeebe4; --muted:#a19d93; --line:#34322d;
+  --good:#c9b38c; --good-ink:#2b2210; --better:#8aa2b8; --better-ink:#0f1820; --best:#8a5a42; --best-ink:#fbefe4; --sel:#eeebe4; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,5vw,3.2rem);line-height:1;margin:0;letter-spacing:-.02em;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:0}
+.lede{color:var(--muted);max-width:60ch;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-weight:500;font-size:.9rem}
+.pill[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.preset{border:0;background:none;text-decoration:underline;text-underline-offset:3px;color:var(--muted);font-size:.88rem;padding:4px 6px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;align-items:start}
+@media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
+.board{display:flex;flex-direction:column;gap:10px}
+.row{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:center}
+@media (max-width:620px){.row{grid-template-columns:minmax(0,1fr)}}
+.row .nm{display:flex;flex-direction:column}
+.row .nm span{font-size:.78rem;color:var(--muted)}
+.chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.chip{border:2px solid transparent;border-radius:8px;padding:10px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:92px;position:relative}
+.chip[data-t="0"]{background:var(--good);color:var(--good-ink)}
+.chip[data-t="1"]{background:var(--better);color:var(--better-ink)}
+.chip[data-t="2"]{background:var(--best);color:var(--best-ink)}
+.chip .tn{font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;font-weight:600;opacity:.8}
+.chip .sp{font-size:.82rem;line-height:1.3;font-weight:500}
+.chip .pr{font-family:var(--mono);font-size:.8rem;margin-top:auto}
+.chip[aria-pressed=false]{opacity:.45;filter:saturate(.6)}
+.chip[aria-pressed=true]{border-color:var(--sel);box-shadow:0 0 0 2px var(--bg) inset}
+.chip:hover{opacity:1}
+.summary{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
+@media (max-width:880px){.summary{position:static}}
+.big{font-family:var(--display);font-weight:800;font-size:2.6rem;line-height:1;letter-spacing:-.02em}
+.lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600}
+.scale{display:flex;flex-direction:column;gap:6px}
+.track{position:relative;height:12px;border-radius:6px;background:linear-gradient(90deg,var(--good),var(--better),var(--best))}
+.marker{position:absolute;top:-5px;width:4px;height:22px;background:var(--ink);border-radius:2px;transform:translateX(-2px)}
+.ends{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+.mixbar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--line)}
+.mixbar i{display:block;height:100%}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.note{font-size:.78rem;color:var(--muted);margin:0}
+@media (prefers-reduced-motion:no-preference){.marker{transition:left .25s}.chip{transition:opacity .15s,filter .15s}}
+</style>
+
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <h1>Mix &amp; match your remodel</h1>
+    <p class="lede">Splurge where it matters, save where it doesn't. Pick a finish for each part of the job and watch the total.</p>
+  </header>
+  <div class="bar">
+    <div class="pills" id="jobs" role="group" aria-label="Room"></div>
+    <div><span class="lbl">Start from:</span> <button type="button" class="preset" data-all="0">All Good</button><button type="button" class="preset" data-all="1">All Better</button><button type="button" class="preset" data-all="2">All Best</button></div>
+  </div>
+  <div class="grid">
+    <div class="board" id="board"></div>
+    <aside class="summary" aria-live="polite">
+      <div><div class="lbl" id="sumLbl">Your mix</div><div class="big num" id="sumTotal">$0</div></div>
+      <div class="scale"><span class="lbl">Where your mix lands</span><div class="track"><div class="marker" id="marker"></div></div><div class="ends"><span id="lo"></span><span id="hi"></span></div></div>
+      <div class="scale"><span class="lbl">Finish mix</span><div class="mixbar" id="mixbar"></div>
+        <div class="legend"><span style="--c:var(--good)">Good</span><span style="--c:var(--better)">Better</span><span style="--c:var(--best)">Best</span></div></div>
+      <p class="note">Sample prices based on default room sizes, including labor, markup and tax.</p>
+    </aside>
+  </div>
+</div>
+
+<script src="../data.js"></script>
+<script>
+(function(){
+const {TIERS,BOOK,defaults,itemPrice,total,usd,esc,unitOf}=window.GBB;
+let job='kitchen', qty=defaults(job), picks=BOOK[job].items.map(()=>1);
+// a believable starting mix for kitchens
+picks=[1,1,2,0,1,2,1];
+const $=id=>document.getElementById(id);
+function renderJobs(){$('jobs').innerHTML=Object.keys(BOOK).map(k=>`<button type="button" class="pill" data-job="${k}" aria-pressed="${k===job}">${BOOK[k].name}</button>`).join('');}
+function renderBoard(){
+  $('board').innerHTML=BOOK[job].items.map((it,ii)=>{
+    const u=unitOf(job,it), n=it.q?qty[it.q]:null;
+    return `<div class="row"><div class="nm"><h2>${esc(it.name)}</h2><span class="num">${n!=null?n+' '+esc(u):'one job'}</span></div><div class="chips">`+
+    it.t.map((t,ti)=>`<button type="button" class="chip" data-i="${ii}" data-t="${ti}" aria-pressed="${picks[ii]===ti}"><span class="tn">${TIERS[ti]}</span><span class="sp">${esc(t[0])}</span><span class="pr">${usd(itemPrice(job,ii,ti,qty).price)}</span></button>`).join('')+`</div></div>`;}).join('');
+}
+function renderSum(){
+  const t=total(job,picks,qty).price, lo=total(job,0,qty).price, hi=total(job,2,qty).price;
+  $('sumTotal').textContent=usd(t);
+  $('sumLbl').textContent=`Your ${BOOK[job].name.toLowerCase()} mix`;
+  $('lo').textContent='All Good '+usd(lo); $('hi').textContent='All Best '+usd(hi);
+  $('marker').style.left=(hi>lo?Math.max(0,Math.min(100,(t-lo)/(hi-lo)*100)):50)+'%';
+  const counts=[0,0,0];picks.forEach(p=>counts[p]++);
+  $('mixbar').innerHTML=counts.map((c,i)=>c?`<i style="width:${c/picks.length*100}%;background:var(--${['good','better','best'][i]})"></i>`:'').join('');
+}
+$('jobs').addEventListener('click',e=>{const b=e.target.closest('[data-job]');if(!b)return;job=b.dataset.job;qty=defaults(job);picks=BOOK[job].items.map(()=>1);renderJobs();renderBoard();renderSum();});
+$('board').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;picks[+c.dataset.i]=+c.dataset.t;
+  c.parentElement.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===c));renderSum();});
+document.querySelectorAll('[data-all]').forEach(b=>b.addEventListener('click',()=>{picks=picks.map(()=>+b.dataset.all);renderBoard();renderSum();}));
+renderJobs();renderBoard();renderSum();
+})();
+</script>

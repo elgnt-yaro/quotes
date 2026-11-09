@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Remodel Quote Tools</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#eceeed;--card:#fff;--ink:#1b2321;--muted:#5b6864;--line:#d0d7d4;--accent:#1f5c4a}
+@media (prefers-color-scheme:dark){:root{--bg:#111614;--card:#19201e;--ink:#e4eae7;--muted:#93a29d;--line:#2b3532;--accent:#5db797;color-scheme:dark}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:40px 16px;display:flex;flex-direction:column;gap:24px}
+h1{font:700 2.6rem/1 "Barlow Condensed",sans-serif;text-transform:uppercase;margin:0;border-bottom:3px solid var(--ink);padding-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+a.card{display:flex;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;color:inherit;text-decoration:none}
+a.card:hover,a.card:focus-visible{border-color:var(--accent);outline:none}
+a.card b{font:700 1.5rem/1.1 "Barlow Condensed",sans-serif;text-transform:uppercase;color:var(--accent)}
+a.card span{color:var(--muted);font-size:.92rem}
+p{color:var(--muted);margin:0}
+</style>
+<main>
+  <h1>Remodel Quote Tools</h1>
+  <p>Four takes on good / better / best pricing for a remodeling business. All prices are samples.</p>
+  <div class="grid">
+    <a class="card" href="classic/"><b>Classic Quote</b><span>Internal tool: three tiers side by side, editable price book, customer view, copyable quote.</span></a>
+    <a class="card" href="blueprint/"><b>Blueprint Wizard</b><span>Customer-facing, step by step: room, size, finish, ballpark range.</span></a>
+    <a class="card" href="mix-match/"><b>Mix &amp; Match</b><span>Choose a tier for each item like finish samples.</span></a>
+    <a class="card" href="budget-fit/"><b>Budget Fit</b><span>Set a budget on a tape measure; it builds the best package that fits.</span></a>
+  </div>
+</main>
+</html>

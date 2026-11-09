@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}</style>
+<title>Three-Tier Remodel Quote</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: job-ticket sheet — inputs rail on the left, three tier cards across, itemized quote below */
+:root{
+  --bg:#eceeed; --surface:#ffffff; --sunk:#f5f6f5; --ink:#1b2321; --muted:#5b6864; --line:#d0d7d4;
+  --accent:#1f5c4a; --accent-ink:#ffffff; --mark:#e3b22c; --mark-ink:#2a2208; --warn:#9a4a12;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111614; --surface:#19201e; --sunk:#151b19; --ink:#e4eae7; --muted:#93a29d; --line:#2b3532;
+  --accent:#5db797; --accent-ink:#0c1a15; --mark:#e6c04a; --mark-ink:#241c04; --warn:#e39a62; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111614; --surface:#19201e; --sunk:#151b19; --ink:#e4eae7; --muted:#93a29d; --line:#2b3532;
+  --accent:#5db797; --accent-ink:#0c1a15; --mark:#e6c04a; --mark-ink:#241c04; --warn:#e39a62; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1280px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:.01em;margin:0;text-wrap:balance;line-height:1.05}
+h1{font-size:2.1rem;text-transform:uppercase}
+h2{font-size:1.35rem;text-transform:uppercase}
+.label{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+input,select,button,textarea{font:inherit;color:inherit}
+input[type=text],input[type=number],select{width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:4px;padding:7px 9px;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{cursor:pointer}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;border-bottom:3px solid var(--ink);padding-bottom:12px}
+.top .meta{display:flex;gap:20px;flex-wrap:wrap}
+.top .meta div{display:flex;flex-direction:column}
+.viewtoggle{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--surface)}
+.viewtoggle button{border:0;background:none;padding:7px 12px;font-size:.85rem;font-weight:500;color:var(--muted)}
+.viewtoggle button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+
+.grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+
+/* inputs rail */
+.rail{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:18px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:.82rem;font-weight:500}
+.unitwrap{display:flex;align-items:center;gap:8px}
+.unitwrap span{font-size:.78rem;color:var(--muted);white-space:nowrap;font-family:var(--mono)}
+.jobs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.jobs button{border:1px solid var(--line);background:var(--sunk);border-radius:4px;padding:8px;font-family:var(--display);font-size:1.05rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.jobs button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.group{display:flex;flex-direction:column;gap:10px}
+.group + .group{border-top:1px dashed var(--line);padding-top:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.internal-only{}
+body.customer .internal-only{display:none!important}
+
+/* tiers */
+.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.tiers{grid-template-columns:minmax(0,1fr)}}
+.tier{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:12px;position:relative}
+.tier.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.tier .head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.tier h3{font-size:1.7rem;text-transform:uppercase}
+.level{display:flex;gap:3px;margin-top:6px}
+.level i{width:18px;height:6px;background:var(--line);border-radius:1px}
+.level i.on{background:var(--accent)}
+.badge{background:var(--mark);color:var(--mark-ink);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:3px 7px;border-radius:3px;white-space:nowrap}
+.price{font-family:var(--display);font-weight:700;font-size:2.4rem;line-height:1}
+.sub{font-size:.8rem;color:var(--muted)}
+.specs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--line);padding-top:12px;flex:1}
+.specs li{display:grid;grid-template-columns:minmax(0,1fr);font-size:.86rem;line-height:1.35}
+.specs li b{font-weight:500;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.choose{border:1px solid var(--accent);background:none;color:var(--accent);border-radius:4px;padding:9px;font-weight:600}
+.tier.selected .choose{background:var(--accent);color:var(--accent-ink)}
+.delta{font-size:.78rem;color:var(--muted);font-family:var(--mono)}
+
+/* quote */
+.quote{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.quote .qhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:flex-end}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--sunk);border-radius:4px;padding:7px 12px;font-size:.85rem;font-weight:500}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;text-align:left;padding:6px 8px;border-bottom:2px solid var(--ink)}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.r,th.r{text-align:right;white-space:nowrap}
+tfoot td{border-bottom:0;padding-block:4px}
+tfoot tr.total td{border-top:2px solid var(--ink);padding-top:10px;font-family:var(--display);font-size:1.5rem;font-weight:700}
+.toast{font-size:.82rem;color:var(--accent);min-height:1.2em}
+#copyFallback{width:100%;min-height:160px;font-family:var(--mono);font-size:.8rem;background:var(--sunk);border:1px solid var(--line);border-radius:4px;padding:8px}
+.note{font-size:.8rem;color:var(--muted);max-width:70ch}
+
+/* price book */
+details.book{background:var(--surface);border:1px solid var(--line);border-radius:6px}
+details.book summary{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;list-style:none}
+details.book summary::-webkit-details-marker{display:none}
+details.book summary::after{content:"+";font-family:var(--mono);font-size:1.2rem;color:var(--muted)}
+details.book[open] summary::after{content:"–"}
+.bookbody{padding:0 18px 18px;display:flex;flex-direction:column;gap:12px}
+.book table td{padding:5px 4px}
+.book input{padding:5px 6px;font-size:.82rem}
+.book input.n{width:76px;font-family:var(--mono)}
+.book .tierhead{text-align:center;border-bottom:2px solid var(--accent)}
+.book td.item{font-weight:500;min-width:140px}
+.book td.desc input{min-width:170px}
+@media (prefers-reduced-motion:no-preference){.tier{transition:box-shadow .15s,border-color .15s}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+      <span class="label">Remodel estimate · Good / Better / Best</span>
+      <h1 id="brandTitle">Your Company Name</h1>
+    </div>
+    <div class="meta">
+      <div><span class="label">Quote no.</span><span class="num" id="quoteNo"></span></div>
+      <div><span class="label">Date</span><span class="num" id="quoteDate"></span></div>
+      <div><span class="label">View</span>
+        <div class="viewtoggle" role="group" aria-label="View">
+          <button type="button" id="vInternal" aria-pressed="true">Internal</button>
+          <button type="button" id="vCustomer" aria-pressed="false">Customer</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <aside class="rail">
+      <div class="group">
+        <span class="label">Job type</span>
+        <div class="jobs" id="jobs"></div>
+      </div>
+      <div class="group">
+        <span class="label">Measurements</span>
+        <div id="qtys" class="group" style="gap:10px"></div>
+      </div>
+      <div class="group">
+        <span class="label">Customer</span>
+        <div class="field"><label for="client">Name</label><input type="text" id="client" placeholder="e.g. Pat Rivera"></div>
+        <div class="field"><label for="address">Job address</label><input type="text" id="address" placeholder="Street, city"></div>
+      </div>
+      <div class="group internal-only">
+        <span class="label">Business settings</span>
+        <div class="field"><label for="company">Company name</label><input type="text" id="company"></div>
+        <div class="row2">
+          <div class="field"><label for="rate">Labor rate</label><div class="unitwrap"><input type="number" id="rate" min="0" step="1"><span>$/hr</span></div></div>
+          <div class="field"><label for="crew">Crew size</label><div class="unitwrap"><input type="number" id="crew" min="1" step="1"><span>people</span></div></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="markup">Markup</label><div class="unitwrap"><input type="number" id="markup" min="0" step="1"><span>%</span></div></div>
+          <div class="field"><label for="tax">Tax on materials</label><div class="unitwrap"><input type="number" id="tax" min="0" step="0.1"><span>%</span></div></div>
+        </div>
+        <div class="field"><label for="recommend">Recommended tier</label>
+          <select id="recommend"><option value="-1">None</option><option value="0">Good</option><option value="1">Better</option><option value="2">Best</option></select>
+        </div>
+      </div>
+    </aside>
+
+    <section style="display:flex;flex-direction:column;gap:20px;min-width:0">
+      <div class="tiers" id="tiers"></div>
+
+      <div class="quote">
+        <div class="qhead">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span class="label" id="qLabel">Selected option</span>
+            <h2 id="qTitle">Kitchen · Better</h2>
+            <span class="sub" id="qFor"></span>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn primary" id="copyBtn">Copy quote text</button>
+          </div>
+        </div>
+        <div class="toast" id="toast" aria-live="polite"></div>
+        <textarea id="copyFallback" readonly hidden aria-label="Quote text"></textarea>
+        <div class="tablewrap"><table id="qTable"></table></div>
+        <p class="note">Estimate valid for 30 days. Final price may change if hidden conditions (rot, wiring, plumbing) are found during demolition. Permits not included unless listed.</p>
+      </div>
+    </section>
+  </div>
+
+  <details class="book internal-only" id="book">
+    <summary><div style="display:flex;flex-direction:column;gap:2px"><h2>Price book</h2><span class="sub" id="bookSub">Sample prices. Replace with your own costs; changes are saved in this browser.</span></div></summary>
+    <div class="bookbody">
+      <div class="tablewrap"><table id="bookTable"></table></div>
+      <div class="actions"><button type="button" class="btn" id="resetBook">Reset this job to sample prices</button><span class="toast" id="bookToast"></span></div>
+    </div>
+  </details>
+</div>
+
+<script>
+(function(){
+const TIERS=['Good','Better','Best'];
+// Sample price book. Each item: q = measurement key (null = fixed, qty 1); t = [spec, material $ per unit, labor hrs per unit] per tier
+const SAMPLE={
+ kitchen:{name:'Kitchen',inputs:[
+   {k:'cab',label:'Cabinet run',unit:'lin ft',v:20},
+   {k:'counter',label:'Countertop area',unit:'sq ft',v:40},
+   {k:'floor',label:'Floor area',unit:'sq ft',v:180},
+   {k:'splash',label:'Backsplash area',unit:'sq ft',v:30}],
+  items:[
+   {name:'Demo & haul-off',q:null,t:[['Tear-out, dumpster, disposal',600,16],['Tear-out, dumpster, disposal',600,16],['Tear-out, dumpster, floor protection',750,18]]},
+   {name:'Cabinets',q:'cab',t:[['Stock shaker, particleboard box',180,1.0],['Semi-custom plywood, soft-close',320,1.2],['Custom inset hardwood',650,1.6]]},
+   {name:'Countertops',q:'counter',t:[['Laminate, square edge',30,0.3],['Quartz, eased edge',75,0.5],['Quartzite, mitered edge',120,0.6]]},
+   {name:'Flooring',q:'floor',t:[['Luxury vinyl plank',3.5,0.04],['Porcelain tile',6,0.1],['Engineered white oak',11,0.08]]},
+   {name:'Backsplash',q:'splash',t:[['Ceramic subway tile',5,0.25],['Glass mosaic',15,0.35],['Handmade zellige',35,0.4]]},
+   {name:'Sink & faucet',q:null,t:[['Stainless drop-in, standard faucet',350,3],['Undermount, pull-down faucet',800,3],['Fireclay farmhouse, pro faucet',1800,4]]},
+   {name:'Lighting',q:null,t:[['Replace existing fixtures',250,4],['4 recessed cans + undercabinet',900,10],['6 cans, undercabinet, 2 pendants',1900,14]]}]},
+ bath:{name:'Bathroom',inputs:[
+   {k:'floor',label:'Floor area',unit:'sq ft',v:50},
+   {k:'wall',label:'Shower wall area',unit:'sq ft',v:80},
+   {k:'vanity',label:'Vanities',unit:'each',v:1}],
+  items:[
+   {name:'Demo & haul-off',q:null,t:[['Tear-out and disposal',400,12],['Tear-out and disposal',400,12],['Tear-out, disposal, subfloor check',500,14]]},
+   {name:'Shower walls',q:'wall',t:[['Acrylic surround',8,0.15],['Ceramic tile on cement board',9,0.4],['Large-format porcelain, niche, waterproof membrane',18,0.55]]},
+   {name:'Floor',q:'floor',t:[['Ceramic tile',4,0.2],['Porcelain tile',7,0.25],['Porcelain with heated floor mat',16,0.35]]},
+   {name:'Vanity & top',q:'vanity',t:[['Stock vanity, cultured marble top',450,4],['Semi-custom vanity, quartz top',1200,5],['Custom vanity, stone top, undermount',2800,6]]},
+   {name:'Shower valve & trim',q:null,t:[['Chrome pressure-balance',400,4],['Brushed nickel thermostatic',1100,5],['Rain head, handheld, thermostatic',2600,7]]},
+   {name:'Toilet',q:null,t:[['Standard two-piece',220,1.5],['Comfort-height elongated',450,1.5],['One-piece, soft-close, skirted',950,2]]},
+   {name:'Exhaust fan & lighting',q:null,t:[['Replace fan',150,2],['Quiet fan + vanity light',450,4],['Humidity-sensing fan, sconces, dimmers',900,6]]}]},
+ deck:{name:'Deck',inputs:[
+   {k:'area',label:'Deck area',unit:'sq ft',v:300},
+   {k:'rail',label:'Railing length',unit:'lin ft',v:40},
+   {k:'steps',label:'Stair treads',unit:'each',v:4}],
+  items:[
+   {name:'Permit & layout',q:null,t:[['Permit, layout, footings',500,10],['Permit, layout, footings',500,10],['Permit, engineered plan, footings',900,12]]},
+   {name:'Framing',q:'area',t:[['Pressure-treated, 16" on center',6,0.12],['Pressure-treated, 12" on center, joist tape',7.5,0.14],['Steel framing',12,0.16]]},
+   {name:'Decking',q:'area',t:[['Pressure-treated pine',3,0.06],['Composite, hidden fasteners',8,0.08],['Ipe hardwood, hidden fasteners',14,0.1]]},
+   {name:'Railing',q:'rail',t:[['Wood balusters',25,0.5],['Composite rail system',55,0.6],['Aluminum cable rail',110,0.8]]},
+   {name:'Stairs',q:'steps',t:[['Wood treads',120,2],['Composite treads, riser lights',200,2.5],['Ipe treads, riser lights',320,3]]}]},
+ floor:{name:'Flooring',inputs:[
+   {k:'area',label:'Floor area',unit:'sq ft',v:600},
+   {k:'trim',label:'Baseboard',unit:'lin ft',v:180}],
+  items:[
+   {name:'Remove existing',q:'area',t:[['Carpet or vinyl removal',0.3,0.03],['Carpet or vinyl removal',0.3,0.03],['Removal + floor leveling',0.9,0.05]]},
+   {name:'Underlayment',q:'area',t:[['Foam underlayment',0.4,0.01],['Cork underlayment',0.8,0.01],['Moisture barrier + cork',1.5,0.015]]},
+   {name:'Flooring',q:'area',t:[['Luxury vinyl plank',3,0.03],['Engineered hardwood',6,0.05],['Site-finished solid oak',9,0.09]]},
+   {name:'Baseboard',q:'trim',t:[['Reinstall existing',0.2,0.04],['New MDF, painted',1.8,0.06],['New poplar, painted, shoe molding',3.2,0.08]]}]}
+};
+const DEFAULT_SETTINGS={company:'Your Company Name',rate:65,crew:2,markup:25,tax:7,recommend:1};
+const KEY='gbb-remodel-quote-v1';
+const clone=o=>JSON.parse(JSON.stringify(o));
+let book=clone(SAMPLE), settings=clone(DEFAULT_SETTINGS), job='kitchen', sel=1, view='internal', qty={}, client='', address='';
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s){if(s.book)book=Object.assign(clone(SAMPLE),s.book);if(s.settings)settings=Object.assign(settings,s.settings);if(s.qty)qty=s.qty;}}catch(e){}
+for(const j in book){qty[j]=qty[j]||{};book[j].inputs.forEach(i=>{if(qty[j][i.k]==null)qty[j][i.k]=i.v;});}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({book,settings,qty}));}catch(e){}}
+
+const $=id=>document.getElementById(id);
+const usd=n=>n.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtQ=n=>(Math.round(n*100)/100).toLocaleString('en-US');
+
+const today=new Date();
+$('quoteDate').textContent=today.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+$('quoteNo').textContent='Q-'+today.getFullYear().toString().slice(2)+String(today.getMonth()+1).padStart(2,'0')+String(today.getDate()).padStart(2,'0')+'-'+String(Math.floor(Math.random()*900)+100);
+
+function calc(j,ti){
+  const b=book[j], q=qty[j], rate=+settings.rate||0, mk=(+settings.markup||0)/100, tx=(+settings.tax||0)/100;
+  let mat=0,lab=0,hrs=0;
+  const lines=b.items.map(it=>{
+    const n=it.q?(+q[it.q]||0):1; const [spec,m,h]=it.t[ti];
+    const lm=m*n, lh=h*n, ll=lh*rate; mat+=lm; lab+=ll; hrs+=lh;
+    const unit=it.q?b.inputs.find(i=>i.k===it.q).unit:'lot';
+    return {name:it.name,spec,n,unit,mat:lm,lab:ll,hrs:lh,price:(lm+ll)*(1+mk)+lm*tx};
+  });
+  const markup=(mat+lab)*mk, tax=mat*tx;
+  return {lines,mat,lab,hrs,markup,tax,total:mat+lab+markup+tax};
+}
+
+function renderJobs(){
+  $('jobs').innerHTML=Object.keys(book).map(k=>`<button type="button" data-job="${k}" aria-pressed="${k===job}">${esc(book[k].name)}</button>`).join('');
+}
+function renderQtys(){
+  $('qtys').innerHTML=book[job].inputs.map(i=>`<div class="field"><label for="q-${i.k}">${esc(i.label)}</label><div class="unitwrap"><input type="number" min="0" step="any" id="q-${job}-${i.k}" data-q="${i.k}" value="${qty[job][i.k]}"><span>${esc(i.unit)}</span></div></div>`).join('');
+  $('qtys').querySelectorAll('label').forEach((l,ix)=>l.htmlFor=`q-${job}-${book[job].inputs[ix].k}`);
+}
+function renderTiers(){
+  const res=TIERS.map((_,i)=>calc(job,i)), rec=+settings.recommend, crew=Math.max(1,+settings.crew||1);
+  $('tiers').innerHTML=res.map((r,i)=>{
+    const days=Math.max(1,Math.ceil(r.hrs/(8*crew)));
+    const delta=i>0?`+${usd(r.total-res[i-1].total)} over ${TIERS[i-1]}`:'Entry option';
+    return `<article class="tier${i===sel?' selected':''}">
+      <div class="head"><div><h3>${TIERS[i]}</h3><div class="level" aria-hidden="true">${[0,1,2].map(n=>`<i class="${n<=i?'on':''}"></i>`).join('')}</div></div>${i===rec?'<span class="badge">Recommended</span>':''}</div>
+      <div><div class="price num">${usd(r.total)}</div><div class="delta">${delta}</div></div>
+      <div class="sub">About ${days} working day${days>1?'s':''}<span class="internal-only"> · ${fmtQ(r.hrs)} labor hrs · ${usd(r.mat)} materials</span></div>
+      <ul class="specs">${r.lines.map(l=>`<li><b>${esc(l.name)}</b>${esc(l.spec)}</li>`).join('')}</ul>
+      <button type="button" class="choose" data-tier="${i}">${i===sel?'Selected':'Choose '+TIERS[i]}</button>
+    </article>`;}).join('');
+  renderQuote(res[sel]);
+}
+function renderQuote(r){
+  const internal=view==='internal';
+  $('qTitle').textContent=`${book[job].name} · ${TIERS[sel]}`;
+  $('qLabel').textContent=internal?'Selected option · internal breakdown':'Selected option';
+  const who=[client,address].filter(Boolean).join(' · ');
+  $('qFor').textContent=who?'Prepared for '+who:'Add a customer name to personalize the quote';
+  let h;
+  if(internal){
+    h=`<thead><tr><th>Item</th><th>Spec</th><th class="r">Qty</th><th class="r">Material</th><th class="r">Labor hrs</th><th class="r">Labor</th></tr></thead><tbody>`+
+      r.lines.map(l=>`<tr><td>${esc(l.name)}</td><td>${esc(l.spec)}</td><td class="r num">${fmtQ(l.n)} ${esc(l.unit)}</td><td class="r num">${usd(l.mat)}</td><td class="r num">${fmtQ(l.hrs)}</td><td class="r num">${usd(l.lab)}</td></tr>`).join('')+
+      `</tbody><tfoot>
+      <tr><td colspan="5">Materials</td><td class="r num">${usd(r.mat)}</td></tr>
+      <tr><td colspan="5">Labor (${fmtQ(r.hrs)} hrs at ${usd(+settings.rate)}/hr)</td><td class="r num">${usd(r.lab)}</td></tr>
+      <tr><td colspan="5">Markup (${settings.markup}%)</td><td class="r num">${usd(r.markup)}</td></tr>
+      <tr><td colspan="5">Tax on materials (${settings.tax}%)</td><td class="r num">${usd(r.tax)}</td></tr>
+      <tr class="total"><td colspan="5">Total</td><td class="r">${usd(r.total)}</td></tr></tfoot>`;
+  }else{
+    h=`<thead><tr><th>Item</th><th>What's included</th><th class="r">Price</th></tr></thead><tbody>`+
+      r.lines.map(l=>`<tr><td>${esc(l.name)}</td><td>${esc(l.spec)}${l.unit!=='lot'?` <span class="sub num">(${fmtQ(l.n)} ${esc(l.unit)})</span>`:''}</td><td class="r num">${usd(l.price)}</td></tr>`).join('')+
+      `</tbody><tfoot><tr class="total"><td colspan="2">Total, materials and labor</td><td class="r">${usd(r.total)}</td></tr></tfoot>`;
+  }
+  $('qTable').innerHTML=h;
+}
+function renderBook(){
+  const b=book[job];
+  $('bookSub').textContent=`${b.name}: sample prices. Replace with your own material costs and labor hours; changes are saved in this browser.`;
+  let h=`<thead><tr><th rowspan="2">Item</th><th rowspan="2">Per</th>${TIERS.map(t=>`<th colspan="3" class="tierhead">${t}</th>`).join('')}</tr><tr>${TIERS.map(()=>'<th>Spec</th><th>Material $</th><th>Labor hrs</th>').join('')}</tr></thead><tbody>`;
+  b.items.forEach((it,ii)=>{
+    const unit=it.q?b.inputs.find(i=>i.k===it.q).unit:'job';
+    h+=`<tr><td class="item">${esc(it.name)}</td><td class="sub num">${esc(unit)}</td>`+it.t.map((t,ti)=>
+      `<td class="desc"><input type="text" id="b-${job}-${ii}-${ti}-0" data-b="${ii},${ti},0" value="${esc(t[0])}" aria-label="${esc(it.name)} ${TIERS[ti]} spec"></td>
+       <td><input class="n" type="number" step="any" min="0" id="b-${job}-${ii}-${ti}-1" data-b="${ii},${ti},1" value="${t[1]}" aria-label="${esc(it.name)} ${TIERS[ti]} material"></td>
+       <td><input class="n" type="number" step="any" min="0" id="b-${job}-${ii}-${ti}-2" data-b="${ii},${ti},2" value="${t[2]}" aria-label="${esc(it.name)} ${TIERS[ti]} labor hours"></td>`).join('')+'</tr>';
+  });
+  $('bookTable').innerHTML=h+'</tbody>';
+}
+function renderAll(){renderJobs();renderQtys();renderBook();renderTiers();}
+
+// settings bind
+['company','rate','crew','markup','tax','recommend'].forEach(k=>{
+  const el=$(k); el.value=settings[k];
+  el.addEventListener('input',()=>{settings[k]=el.type==='number'||k==='recommend'?(el.value===''?0:+el.value):el.value;
+    if(k==='company')$('brandTitle').textContent=el.value||'Your Company Name';save();renderTiers();});
+});
+$('brandTitle').textContent=settings.company||'Your Company Name';
+$('client').addEventListener('input',e=>{client=e.target.value;renderTiers();});
+$('address').addEventListener('input',e=>{address=e.target.value;renderTiers();});
+$('jobs').addEventListener('click',e=>{const b=e.target.closest('[data-job]');if(!b)return;job=b.dataset.job;renderAll();});
+$('qtys').addEventListener('input',e=>{const k=e.target.dataset.q;if(!k)return;qty[job][k]=e.target.value===''?0:+e.target.value;save();renderTiers();});
+$('tiers').addEventListener('click',e=>{const b=e.target.closest('[data-tier]');if(!b)return;sel=+b.dataset.tier;renderTiers();});
+$('bookTable').addEventListener('input',e=>{const d=e.target.dataset.b;if(!d)return;const [ii,ti,f]=d.split(',').map(Number);
+  book[job].items[ii].t[ti][f]=f===0?e.target.value:(e.target.value===''?0:+e.target.value);save();renderTiers();});
+$('resetBook').addEventListener('click',()=>{book[job]=clone(SAMPLE[job]);save();renderBook();renderTiers();$('bookToast').textContent=`${book[job].name} reset to sample prices`;setTimeout(()=>$('bookToast').textContent='',2500);});
+function setView(v){view=v;document.body.classList.toggle('customer',v==='customer');$('vInternal').setAttribute('aria-pressed',v==='internal');$('vCustomer').setAttribute('aria-pressed',v==='customer');renderTiers();}
+$('vInternal').addEventListener('click',()=>setView('internal'));
+$('vCustomer').addEventListener('click',()=>setView('customer'));
+
+function quoteText(){
+  const r=calc(job,sel), lines=[];
+  lines.push((settings.company||'Your Company')+' — Remodel Estimate');
+  lines.push(`${$('quoteNo').textContent} · ${$('quoteDate').textContent}`);
+  if(client)lines.push('Prepared for: '+client);
+  if(address)lines.push('Job address: '+address);
+  lines.push('',`${book[job].name} — ${TIERS[sel]} option`,'');
+  r.lines.forEach(l=>lines.push(`• ${l.name}: ${l.spec}${l.unit!=='lot'?` (${fmtQ(l.n)} ${l.unit})`:''} — ${usd(l.price)}`));
+  lines.push('',`TOTAL: ${usd(r.total)}`,'');
+  const others=TIERS.map((t,i)=>i!==sel?`${t}: ${usd(calc(job,i).total)}`:null).filter(Boolean).join(' · ');
+  lines.push('Other options: '+others);
+  lines.push('','Estimate valid for 30 days. Final price may change if hidden conditions are found during demolition. Permits not included unless listed.');
+  return lines.join('\n');
+}
+$('copyBtn').addEventListener('click',()=>{
+  const t=quoteText(), fb=$('copyFallback');
+  const ok=()=>{fb.hidden=true;$('toast').textContent='Quote copied. Paste it into an email or text.';setTimeout(()=>$('toast').textContent='',3000);};
+  const fail=()=>{fb.value=t;fb.hidden=false;fb.focus();fb.select();$('toast').textContent='Copy was blocked here. The text is selected below; press Ctrl+C or ⌘C.';};
+  try{navigator.clipboard.writeText(t).then(ok,fail);}catch(e){fail();}
+});
+
+renderAll();
+})();
+</script>
